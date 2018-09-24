@@ -1,7 +1,9 @@
 source "https://rubygems.org"
-gem 'pry'
+gem "activerecord", "4.2.5", :require => "active_record"
+gem "database_cleaner"
+gem "rake"
+gem "require_all"
+gem "pry"
 gem "rspec"
 gem "sinatra-activerecord"
 gem "sqlite3"
-gem "rake"
-gem "database_cleaner"
