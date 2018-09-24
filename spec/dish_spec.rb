@@ -11,7 +11,6 @@ describe 'Dish' do
   
   it "has associated tags in an array" do
     pizza = Dish.create(:name => "pizza", :restaurant => alices_restaurant)
-    
     italian = Tag.create(:name => "italian")
     pizza.tags << italian
     
