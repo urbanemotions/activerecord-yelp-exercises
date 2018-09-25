@@ -14,4 +14,8 @@ class Restaurant < ActiveRecord::Base
       nil
     end
   end
+
+  def self.with_long_names
+    where('length(name) > 12')
+  end
 end
