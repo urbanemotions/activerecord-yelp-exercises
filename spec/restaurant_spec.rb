@@ -43,5 +43,22 @@ describe 'Resaurant' do
       expect(Restaurant.tenth.id).to eq(10)
     end
   end
+
+  describe 'Restaurant.with_long_names' do
+
+    it 'finds all the restaurants with names longer than 12 characters' do
+      less_than_12 = Restaurant.create(:name => "123")
+      exactly_12 = Restaurant.create(:name => "123456789012")
+      greater_than_12_1 = Restaurant.create(:name => "really long name")
+      greater_than_12_2 = Restaurant.create(:name => "really really long name")
+
+      result = Restaurant.with_long_names
+      expect(result).to include(greater_than_12_1)
+      expect(result).to include(greater_than_12_2)
+      expect(result).not_to include(exactly_12)
+      expect(result).not_to include(less_than_12)
+    end
+
+  end
     
 end
