@@ -20,14 +20,14 @@ class Restaurant < ActiveRecord::Base
   end
 
   def self.focused
-    all.select do |restaurant|
-      restaurant.dishes.count < 5
-    end
+    Dish.group("restaurant_id").count
+        .select { |restaurant_id, dish_count| dish_count < 5 }
+        .map    { |restaurant_id, dish_count| Restaurant.find(restaurant_id) }
   end
 
   def self.large_menu
-    all.select do |restaurant|
-      restaurant.dishes.count > 20
-    end
+    Dish.group("restaurant_id").count
+        .select { |restaurant_id, dish_count| dish_count > 20 }
+        .map    { |restaurant_id, dish_count| Restaurant.find(restaurant_id) }
   end
 end
