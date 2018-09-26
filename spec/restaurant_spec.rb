@@ -60,5 +60,38 @@ describe 'Resaurant' do
     end
 
   end
+
+  describe 'Restaurant.focused' do
+
+    it 'finds all the restaurants with fewer than 5 dishes' do
+      less_than_5 = Restaurant.create(:name => "less than 5 dishes")
+      exactly_5   = Restaurant.create(:name => "exactly 5")
+      expected1   = Restaurant.create(:name => "expected1")
+      expected2   = Restaurant.create(:name => "expected2")
+
+      for i in 1..4
+        Dish.create(:name => "dish#{i}", :restaurant => less_than_5)
+      end
+
+      for i in 5..9
+        Dish.create(:name => "dish#{i}", :restaurant => exactly_5)
+      end
+
+      for i in 10..20
+        Dish.create(:name => "dish#{i}", :restaurant => expected1)
+      end
+
+      for i in 21..45
+        Dish.create(:name => "dish#{i}", :restaurant => expected2)
+      end
+
+      result = Restaurant.focused
+      expect(result).to include(expected1)
+      expect(result).to include(expected2)
+      expect(result).not_to include(exactly_5)
+      expect(result).not_to include(less_than_5)
+    end
+
+  end
     
 end
