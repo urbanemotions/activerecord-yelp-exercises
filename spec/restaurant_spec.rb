@@ -93,5 +93,39 @@ describe 'Resaurant' do
     end
 
   end
+
+  describe 'Restaurant.large_menu' do
+
+    it 'finds all the restaurants with more than 20 dishes' do
+      fewer_than_20 = Restaurant.create(:name => "less than 20 dishes")
+      exactly_20    = Restaurant.create(:name => "exactly 20")
+      expected1     = Restaurant.create(:name => "expected1")
+      expected2     = Restaurant.create(:name => "expected2")
+
+      for i in 1..19
+        Dish.create(:name => "dish#{i}", :restaurant => fewer_than_20)
+      end
+
+      for i in 20..39
+        Dish.create(:name => "dish#{i}", :restaurant => exactly_20)
+      end
+
+      for i in 40..60
+        Dish.create(:name => "dish#{i}", :restaurant => expected1)
+      end
+
+      for i in 61..81
+        Dish.create(:name => "dish#{i}", :restaurant => expected2)
+      end
+
+      result = Restaurant.large_menu
+      expect(result).to include(expected1)
+      expect(result).to include(expected2)
+      expect(result).not_to include(exactly_20)
+      expect(result).not_to include(fewer_than_20)
+
+    end
+
+  end
     
 end

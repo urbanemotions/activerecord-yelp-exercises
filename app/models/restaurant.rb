@@ -24,4 +24,10 @@ class Restaurant < ActiveRecord::Base
       restaurant.dishes.count < 5
     end
   end
+
+  def self.large_menu
+    all.select do |restaurant|
+      restaurant.dishes.count > 20
+    end
+  end
 end
