@@ -18,4 +18,10 @@ class Restaurant < ActiveRecord::Base
   def self.with_long_names
     where('length(name) > 12')
   end
+
+  def self.focused
+    all.select do |restaurant|
+      restaurant.dishes.count > 5
+    end
+  end
 end
