@@ -21,7 +21,7 @@ class Restaurant < ActiveRecord::Base
 
   def self.focused
     all.select do |restaurant|
-      restaurant.dishes.count > 5
+      restaurant.dishes.count < 5
     end
   end
 end
