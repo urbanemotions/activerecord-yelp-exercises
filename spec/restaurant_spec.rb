@@ -127,5 +127,33 @@ describe 'Resaurant' do
     end
 
   end
+
+  describe 'Restaurant.vegetarian' do
+
+    it 'finds all the restaurants where all of the dishes are tagged vegetarian' do
+      vegetarian = Tag.create(:name => "vegetarian")
+
+      no_vegetarian = Restaurant.create(:name => "no vegetarian")
+      some_vegetarian = Restaurant.create(:name => "some vegetarian")
+      all_vegetarian1 = Restaurant.create(:name => "all vegetarian 1")
+      all_vegetarian2 = Restaurant.create(:name => "all vegetarian 2")
+
+     Dish.create(:name => "not veggie1", :tags => [vegetarian], :restaurant => no_vegetarian)
+
+     Dish.create(:name => "veggie1", :tags => [vegetarian], :restaurant => some_vegetarian)
+     Dish.create(:name => "not veggie2", :restaurant => some_vegetarian)
+
+     Dish.create(:name => "veggie2", :tags => [vegetarian], :restaurant => all_vegetarian1)
+
+     Dish.create(:name => "veggie3", :tags => [vegetarian], :restaurant => all_vegetarian2)
+
+     result = Restaurant.vegetarian
+     expect(result).to include(all_vegetarian1)
+     expect(result).to include(all_vegetarian2)
+     expect(result).not_to include(no_vegetarian)
+     expect(result).not_to include(some_vegetarian)
+    end
+
+  end
     
 end
