@@ -3,31 +3,34 @@ class Restaurant < ActiveRecord::Base
 
   validates :name, presence: true
 
+  scope :with_dish_with_tag, -> (name) { joins(:dishes).merge(Dish.with_tag(name)).uniq }
+  scope :with_vegetarian_dish, -> { with_dish_with_tag("vegetarian") }
+  scope :with_dish_without_tag, -> (name) { joins(:dishes).merge(Dish.without_tag(name)).uniq }
+  scope :with_non_vegetarian_dish, -> { with_dish_without_tag("vegetarian") }
+  scope :without_dishes_without_tag, -> (name) { where.not(id: with_dish_without_tag(name)) }
+  scope :vegetarian, -> { without_dishes_without_tag("vegetarian") }
+
   def self.mcdonalds
     Restaurant.find_by(:name => "McDonalds")
   end
 
   def self.tenth
-    begin
-      Restaurant.find(10)
-    rescue ActiveRecord::RecordNotFound => e
-      nil
-    end
+    Restaurant.find(10)
   end
 
   def self.with_long_names
-    where('length(name) > 12')
+    where('LENGTH(name) > 12')
   end
 
   def self.focused
-    Dish.group("restaurant_id").count
-        .select { |restaurant_id, dish_count| dish_count < 5 }
-        .map    { |restaurant_id, dish_count| Restaurant.find(restaurant_id) }
+    joins(:dishes).having('COUNT(dishes.id) < 5')
   end
 
   def self.large_menu
-    Dish.group("restaurant_id").count
-        .select { |restaurant_id, dish_count| dish_count > 20 }
-        .map    { |restaurant_id, dish_count| Restaurant.find(restaurant_id) }
+    joins(:dishes).having('COUNT(dishes.id) > 20')
+  end
+
+  def self.name_like(name)
+    where('name LIKE %', name)
   end
 end
