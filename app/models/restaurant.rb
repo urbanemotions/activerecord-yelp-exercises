@@ -23,11 +23,11 @@ class Restaurant < ActiveRecord::Base
   end
 
   def self.focused
-    joins(:dishes).having('COUNT(dishes.id) < 5')
+    joins(:dishes).having('COUNT(dishes.id) < 5').group(:restaurant_id)
   end
 
   def self.large_menu
-    joins(:dishes).having('COUNT(dishes.id) > 20')
+    joins(:dishes).having('COUNT(dishes.id) > 20').group(:restaurant_id)
   end
 
   def self.name_like(name)
