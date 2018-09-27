@@ -3,6 +3,8 @@ class Tag < ActiveRecord::Base
   has_many :dish_tags
   has_many :dishes, through: :dish_tags
 
+  scope :with_name, -> (name) { where(name: name) }
+
   validate :name, :name_validator
 
   private
