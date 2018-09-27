@@ -7,7 +7,7 @@ describe 'Resaurant' do
     expect(restaurant.name).to eq ("Alice's Restaurant")
   end
   
-  it "has associated dishes in an array" do
+  it "has associated dishes" do
     alices = Restaurant.create(:name => "Alice's Restaurant")
     
     pizza = Dish.new(:name => "pizza")
@@ -132,13 +132,14 @@ describe 'Resaurant' do
 
     it 'finds all the restaurants where all of the dishes are tagged vegetarian' do
       vegetarian = Tag.create(:name => "vegetarian")
+      other = Tag.create(name: "other")
 
       no_vegetarian = Restaurant.create(:name => "no vegetarian")
       some_vegetarian = Restaurant.create(:name => "some vegetarian")
       all_vegetarian1 = Restaurant.create(:name => "all vegetarian 1")
       all_vegetarian2 = Restaurant.create(:name => "all vegetarian 2")
 
-     Dish.create(:name => "not veggie1", :tags => [vegetarian], :restaurant => no_vegetarian)
+     Dish.create(:name => "not veggie1", :tags => [other], :restaurant => no_vegetarian)
 
      Dish.create(:name => "veggie1", :tags => [vegetarian], :restaurant => some_vegetarian)
      Dish.create(:name => "not veggie2", :restaurant => some_vegetarian)
