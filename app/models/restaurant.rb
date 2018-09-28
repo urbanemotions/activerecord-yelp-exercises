@@ -31,6 +31,6 @@ class Restaurant < ActiveRecord::Base
   end
 
   def self.name_like(name)
-    where('name LIKE %', name)
+    where('name LIKE ?', "%#{name}%")
   end
 end
