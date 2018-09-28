@@ -9,6 +9,8 @@ class Restaurant < ActiveRecord::Base
   scope :with_non_vegetarian_dish, -> { with_dish_without_tag("vegetarian") }
   scope :without_dishes_without_tag, -> (name) { where.not(id: with_dish_without_tag(name)) }
   scope :vegetarian, -> { without_dishes_without_tag("vegetarian") }
+  scope :name_like, -> (name) { where("name LIKE ?", "%#{name}%") }
+  scope :name_not_like, -> (name) { where.not(id: name_like(name)) }
 
   def self.mcdonalds
     Restaurant.find_by(:name => "McDonalds")
@@ -30,7 +32,4 @@ class Restaurant < ActiveRecord::Base
     joins(:dishes).having('COUNT(dishes.id) > 20').group(:restaurant_id)
   end
 
-  def self.name_like(name)
-    where('name LIKE ?', "%#{name}%")
-  end
 end
