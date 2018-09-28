@@ -173,5 +173,22 @@ describe 'Resaurant' do
     end
 
   end
+
+  describe 'Restaurant.name_not_like' do
+
+    it 'finds all restaurants with names that do not contain the passed in string' do
+
+      exact     = Restaurant.create(:name => "term")
+      prepended = Restaurant.create(:name => "term_search")
+      appended  = Restaurant.create(:name => "search_term")
+      bad_match = Restaurant.create(:name => "foobar")
+
+      result    = Restaurant.name_not_like("term")
+
+      expect(result).to include(bad_match)
+      expect(result).to_not include(exact, prepended, appended)
+    end
+
+  end
     
 end
