@@ -156,5 +156,22 @@ describe 'Resaurant' do
     end
 
   end
+
+  describe 'Restaurant.name_like' do
+
+    it 'finds all restaurants with names that contain the passed in string' do
+
+      exact     = Restaurant.create(:name => "term")
+      prepended = Restaurant.create(:name => "term_search")
+      appended  = Restaurant.create(:name => "search_term")
+      bad_match = Restaurant.create(:name => "foobar")
+
+      result    = Restaurant.name_like("term")
+
+      expect(result).to include(exact, prepended, appended)
+      expect(result).to_not include(bad_match)
+    end
+
+  end
     
 end
