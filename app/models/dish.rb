@@ -7,8 +7,10 @@ class Dish < ActiveRecord::Base
   scope :without_tag, -> (name) { where.not(id: with_tag(name)) }
   scope :vegetarian, -> { with_tag("vegetarian") }
   scope :non_veggie, -> { without_tag("vegetarian") }
+  scope :names, -> { pluck(:name) }
 
   validates :name, presence: true
   validates :restaurant, presence: true
   validates_associated :dish_tags
+
 end
