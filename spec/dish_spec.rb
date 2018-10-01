@@ -9,6 +9,8 @@ describe 'Dish' do
 
   let!(:pizza) {Dish.create(:name => "pizza", :tags => [italian], :restaurant => alices_restaurant)}
   let!(:pasta) {Dish.create(:name => "pasta", :tags => [italian, vegetarian], :restaurant => alices_restaurant)}
+  let!(:soda)  {Dish.create(:name => "soda", :restaurant => alices_restaurant)}
+  let!(:water) {Dish.create(:name => "water", :restaurant => alices_restaurant)}
 
   it "has a name" do 
     expect(pizza.name).to eq("pizza")
@@ -37,7 +39,7 @@ describe 'Dish' do
   describe 'Dish.names' do
 
     it 'returns an array of all dish names' do
-      expect(Dish.names).to contain_exactly("pizza", "pasta")
+      expect(Dish.names).to contain_exactly("pizza", "pasta", "soda", "water")
     end
 
   end
@@ -49,5 +51,13 @@ describe 'Dish' do
     end
 
   end
+
+  describe 'Dish.untagged' do
+
+    it "returns an array of dishes with no tags" do
+      expect(Dish.untagged).to contain_exactly(soda, water)
+    end
+
+  end 
 
 end
