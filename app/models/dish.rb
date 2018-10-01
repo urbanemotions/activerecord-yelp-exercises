@@ -11,6 +11,7 @@ class Dish < ActiveRecord::Base
   scope :max_tags, -> { joins(:dish_tags).group(:dish_id).order("COUNT(dish_id) DESC").take }
   scope :tagged, -> { joins(:tags) }
   scope :untagged, -> { where.not(id: tagged) }
+  scope :average_tag_count, -> { average(:tag_count) }
 
   validates :name, presence: true
   validates :restaurant, presence: true
