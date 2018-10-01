@@ -8,6 +8,7 @@ class Dish < ActiveRecord::Base
   scope :vegetarian, -> { with_tag("vegetarian") }
   scope :non_veggie, -> { without_tag("vegetarian") }
   scope :names, -> { pluck(:name) }
+  scope :max_tags, -> { joins(:dish_tags).group(:dish_id).order("COUNT(dish_id) DESC").take }
 
   validates :name, presence: true
   validates :restaurant, presence: true
