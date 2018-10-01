@@ -60,4 +60,12 @@ describe 'Dish' do
 
   end 
 
+  describe 'Dish.average_tag_count' do
+
+    it "returns the average tag count for all dishes" do
+      expect(Dish.average_tag_count).to eq(0.75)
+    end
+
+  end
+
 end
