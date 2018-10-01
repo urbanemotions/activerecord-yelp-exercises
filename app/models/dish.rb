@@ -17,4 +17,8 @@ class Dish < ActiveRecord::Base
   validates :restaurant, presence: true
   validates_associated :dish_tags
 
+  def tag_names
+    tags.pluck(:name)
+  end
+
 end
