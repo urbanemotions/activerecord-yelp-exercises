@@ -64,6 +64,7 @@ Write the following methods. You should use ActiveRecord query methods to get th
 * `Restaurant.vegetarian` - all restaurants where all of the dishes are tagged vegetarian
 * `Restaurant.name_like(name)` - all restaurants where the name is like the name passed in
 * `Restaurant.name_not_like(name)` - all restaurants where the name is not like the name passed in
+* `Restaurant#most_popular_tag` - find the most common tag among dishes at this restaurant
 
 *Dish*
 * `Dish.names` - all the names of dishes
