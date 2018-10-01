@@ -5,9 +5,10 @@ describe 'Dish' do
   let(:alices_restaurant) {Restaurant.create(:name => "Alice's Restaurant")}
 
   let(:italian) {Tag.create(:name => "italian")}
+  let(:vegetarian) {Tag.create(:name => "vegetarian")}
 
   let!(:pizza) {Dish.create(:name => "pizza", :tags => [italian], :restaurant => alices_restaurant)}
-  let!(:pasta) {Dish.create(:name => "pasta", :tags => [italian], :restaurant => alices_restaurant)}
+  let!(:pasta) {Dish.create(:name => "pasta", :tags => [italian, vegetarian], :restaurant => alices_restaurant)}
 
   it "has a name" do 
     expect(pizza.name).to eq("pizza")
@@ -37,6 +38,14 @@ describe 'Dish' do
 
     it 'returns an array of all dish names' do
       expect(Dish.names).to contain_exactly("pizza", "pasta")
+    end
+
+  end
+
+  describe 'Dish.max_tags' do
+
+    it 'returns a signle dish with the most tags' do
+      expect(Dish.max_tags).to eq(pasta)
     end
 
   end
