@@ -78,4 +78,13 @@ describe 'Dish' do
 
   end
 
+  describe 'Dish#tag_names' do
+
+    it "returns an array of the names of each tag associated with this dish" do
+      expect(pasta.tag_names).to contain_exactly("vegetarian", "italian")
+      expect(pizza.tag_names).to contain_exactly("italian")
+    end
+
+  end
+
 end
