@@ -2,32 +2,28 @@ require_relative 'spec_helper'
 
 describe 'Resaurant' do
 
+  let(:alices)    {Restaurant.create(:name => "Alice's Restaurant")}
+  let(:pizza)     {Dish.create(:name => "pizza", :restaurant => alices)}
+
   it "has a name" do
-    restaurant = Restaurant.create(:name => "Alice's Restaurant")
-    expect(restaurant.name).to eq ("Alice's Restaurant")
+    expect(alices.name).to eq ("Alice's Restaurant")
   end
   
   it "has associated dishes" do
-    alices = Restaurant.create(:name => "Alice's Restaurant")
-    
-    pizza = Dish.new(:name => "pizza")
-    pizza.restaurant = alices
-    pizza.save
-    
-    pizza.reload
     expect(alices.dishes).to include(pizza)
     expect(pizza.restaurant).to eq(alices)
   end
   
   it "validates that name is present" do 
     expect(Restaurant.new(:name => nil).valid?).to be false
-    expect(Restaurant.new(:name => "Alice's Restaurant").valid?).to be true
+    expect(Restaurant.new(:name => "Some Name").valid?).to be true
   end
 
   describe 'Restaurant.mcdonalds' do
 
+    let!(:mcdonalds) {Restaurant.create(:name => "McDonalds")}
+
     it 'finds the restaurant with the name "McDonalds"' do
-      mcdonalds = Restaurant.create(name: "McDonalds")
       expect(Restaurant.mcdonalds.id).to eq(mcdonalds.id)
     end
 
@@ -52,11 +48,7 @@ describe 'Resaurant' do
       greater_than_12_1 = Restaurant.create(:name => "really long name")
       greater_than_12_2 = Restaurant.create(:name => "really really long name")
 
-      result = Restaurant.with_long_names
-      expect(result).to include(greater_than_12_1)
-      expect(result).to include(greater_than_12_2)
-      expect(result).not_to include(exactly_12)
-      expect(result).not_to include(less_than_12)
+      expect(Restaurant.with_long_names).to contain_exactly(greater_than_12_1, greater_than_12_2)
     end
 
   end
@@ -85,11 +77,7 @@ describe 'Resaurant' do
         Dish.create(:name => "dish#{i}", :restaurant => expected2)
       end
 
-      result = Restaurant.focused
-      expect(result).to include(expected1)
-      expect(result).to include(expected2)
-      expect(result).not_to include(exactly_5)
-      expect(result).not_to include(greater_than_5)
+      expect(Restaurant.focused).to contain_exactly(expected1, expected2)
     end
 
   end
@@ -118,12 +106,7 @@ describe 'Resaurant' do
         Dish.create(:name => "dish#{i}", :restaurant => expected2)
       end
 
-      result = Restaurant.large_menu
-      expect(result).to include(expected1)
-      expect(result).to include(expected2)
-      expect(result).not_to include(exactly_20)
-      expect(result).not_to include(fewer_than_20)
-
+      expect(Restaurant.large_menu).to contain_exactly(expected1, expected2)
     end
 
   end
@@ -139,20 +122,16 @@ describe 'Resaurant' do
       all_vegetarian1 = Restaurant.create(:name => "all vegetarian 1")
       all_vegetarian2 = Restaurant.create(:name => "all vegetarian 2")
 
-     Dish.create(:name => "not veggie1", :tags => [other], :restaurant => no_vegetarian)
+      Dish.create(:name => "not veggie1", :tags => [other], :restaurant => no_vegetarian)
 
-     Dish.create(:name => "veggie1", :tags => [vegetarian], :restaurant => some_vegetarian)
-     Dish.create(:name => "not veggie2", :restaurant => some_vegetarian)
+      Dish.create(:name => "veggie1", :tags => [vegetarian], :restaurant => some_vegetarian)
+      Dish.create(:name => "not veggie2", :restaurant => some_vegetarian)
 
-     Dish.create(:name => "veggie2", :tags => [vegetarian], :restaurant => all_vegetarian1)
+      Dish.create(:name => "veggie2", :tags => [vegetarian], :restaurant => all_vegetarian1)
 
-     Dish.create(:name => "veggie3", :tags => [vegetarian], :restaurant => all_vegetarian2)
+      Dish.create(:name => "veggie3", :tags => [vegetarian], :restaurant => all_vegetarian2)
 
-     result = Restaurant.vegetarian
-     expect(result).to include(all_vegetarian1)
-     expect(result).to include(all_vegetarian2)
-     expect(result).not_to include(no_vegetarian)
-     expect(result).not_to include(some_vegetarian)
+      expect(Restaurant.vegetarian).to contain_exactly(all_vegetarian1, all_vegetarian2)
     end
 
   end
@@ -166,10 +145,7 @@ describe 'Resaurant' do
       appended  = Restaurant.create(:name => "search_term")
       bad_match = Restaurant.create(:name => "foobar")
 
-      result    = Restaurant.name_like("term")
-
-      expect(result).to include(exact, prepended, appended)
-      expect(result).to_not include(bad_match)
+      expect(Restaurant.name_like("term")).to contain_exactly(exact, prepended, appended)
     end
 
   end
@@ -183,10 +159,7 @@ describe 'Resaurant' do
       appended  = Restaurant.create(:name => "search_term")
       bad_match = Restaurant.create(:name => "foobar")
 
-      result    = Restaurant.name_not_like("term")
-
-      expect(result).to include(bad_match)
-      expect(result).to_not include(exact, prepended, appended)
+      expect(Restaurant.name_not_like("term")).to contain_exactly(bad_match)
     end
 
   end
