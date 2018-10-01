@@ -4,17 +4,16 @@ describe 'Dish' do
 
   let(:alices_restaurant) {Restaurant.create(:name => "Alice's Restaurant")}
 
+  let(:italian) {Tag.create(:name => "italian")}
+
+  let!(:pizza) {Dish.create(:name => "pizza", :tags => [italian], :restaurant => alices_restaurant)}
+  let!(:pasta) {Dish.create(:name => "pasta", :tags => [italian], :restaurant => alices_restaurant)}
+
   it "has a name" do 
-    dish = Dish.create(:name => "pizza", :restaurant => alices_restaurant)
-    expect(dish.name).to eq("pizza")
+    expect(pizza.name).to eq("pizza")
   end
   
   it "has associated tags in an array" do
-    pizza = Dish.create(:name => "pizza", :restaurant => alices_restaurant)
-    italian = Tag.create(:name => "italian")
-    pizza.tags << italian
-    
-    italian.reload
     expect(pizza.tags).to include(italian)
     expect(italian.dishes).to include(pizza)
   end
@@ -32,6 +31,14 @@ describe 'Dish' do
   it "invokes the validations associated with DishTag" do 
     # Somehow we need to verify here that the valitations on DishTag are actually
     # checked whenever we add a tag to a dish.
+  end
+
+  describe 'Dish.names' do
+
+    it 'returns an array of all dish names' do
+      expect(Dish.names).to contain_exactly("pizza", "pasta")
+    end
+
   end
 
 end
