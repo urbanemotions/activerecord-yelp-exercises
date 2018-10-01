@@ -68,4 +68,14 @@ describe 'Dish' do
 
   end
 
+  describe 'Dish#tag_count' do
+
+    it "returns the number of tags a dish has" do
+      expect(pizza.tag_count).to eq(1)
+      expect(pasta.tag_count).to eq(2)
+      expect(soda.tag_count).to  eq(0)
+    end
+
+  end
+
 end
