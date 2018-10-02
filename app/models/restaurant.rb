@@ -23,13 +23,21 @@ class Restaurant < ActiveRecord::Base
   def self.with_long_names
     where('LENGTH(name) > 12')
   end
-
+  
   def self.focused
     joins(:dishes).having('COUNT(dishes.id) < 5').group(:restaurant_id)
   end
 
   def self.large_menu
     joins(:dishes).having('COUNT(dishes.id) > 20').group(:restaurant_id)
+  end
+
+  def most_popular_tag
+    Tag.joins(:dishes)
+       .where(dishes: {:restaurant_id => self.id})
+       .group(:tag_id)
+       .order('COUNT(restaurant_id) DESC')
+       .take
   end
 
 end
