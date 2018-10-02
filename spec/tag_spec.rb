@@ -76,6 +76,20 @@ describe 'Tag' do
       expect(Tag.least_common).to eq(one)
     end
 
+
   end
- 
+
+  describe "Tag.unused" do
+
+    it "returns an array of all tags without associated dishes" do
+      unused1 = Tag.create(:name => "lonely")
+      unused2 = Tag.create(:name => "unloved")
+      used    = Tag.create(:name => "best")
+
+      Dish.create(:name => "some dish", :restaurant => alices, :tags => [used])
+
+      expect(Tag.unused).to contain_exactly(unused1, unused2)
+    end
+
+  end
 end
