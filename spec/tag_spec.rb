@@ -56,5 +56,26 @@ describe 'Tag' do
     end
 
   end
-  
+
+  describe "Tag.least_common" do
+
+    it "returns the tag with the most associated dishes" do
+      three = Tag.create(:name => "three")
+      two   = Tag.create(:name => "two")
+      one   = Tag.create(:name => "one")
+
+      for i in 1..3 do
+        Dish.create(:name => "dish#{i}", :tags => [three], :restaurant => alices)
+      end
+
+      for i in 1..2 do
+        Dish.create(:name => "dish#{i+3}", :tags => [two], :restaurant => alices)
+      end
+
+      Dish.create(:name => "dish6", :tags => [one], :restaurant => alices)
+      expect(Tag.least_common).to eq(one)
+    end
+
+  end
+ 
 end
