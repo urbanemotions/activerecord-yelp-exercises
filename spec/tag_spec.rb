@@ -92,4 +92,32 @@ describe 'Tag' do
     end
 
   end
+
+  describe "Tag.uncommon" do
+
+    it "returns an array of all tags associated with fewer than 5 dishes" do
+      fewerer_than_5 = Tag.create(:name => "fewererthan 5")
+      fewer_than_5   = Tag.create(:name => "fewerthan 5")
+      exactly_5      = Tag.create(:name => "eactly 5")
+      more_than_5    = Tag.create(:name => "morethan 5")
+
+      Dish.create(:name => "1", :restaurant => alices, :tags => [fewerer_than_5])
+
+      for i in 2..5
+        Dish.create(:name => "#{i}", :restaurant => alices, :tags => [fewer_than_5])
+      end
+
+      for i in 6..10
+        Dish.create(:name => "#{i}", :restaurant => alices, :tags => [exactly_5])
+      end
+
+      for i in 11..30
+        Dish.create(:name => "#{i}", :restaurant => alices, :tags => [more_than_5])
+      end
+
+      expect(Tag.uncommon).to contain_exactly(fewerer_than_5, fewer_than_5)
+    end
+
+  end
+
 end
