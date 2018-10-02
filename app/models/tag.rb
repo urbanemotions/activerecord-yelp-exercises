@@ -4,6 +4,7 @@ class Tag < ActiveRecord::Base
   has_many :dishes, through: :dish_tags
 
   scope :with_name, -> (name) { where(name: name) }
+  scope :most_common, -> { Tag.joins(:dish_tags).group(:tag_id).order("COUNT(dish_tags.dish_id) DESC").take }
 
   validate :name, :name_validator
 
@@ -18,4 +19,5 @@ class Tag < ActiveRecord::Base
       errors.add(:name, "can't be more than 2 words")
     end
   end
+
 end
