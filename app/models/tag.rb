@@ -4,7 +4,11 @@ class Tag < ActiveRecord::Base
   has_many :dishes, through: :dish_tags
 
   scope :with_name, -> (name) { where(name: name) }
-  scope :most_common, -> { Tag.joins(:dish_tags).group(:tag_id).order("COUNT(dish_tags.dish_id) DESC").take }
+  scope :grouped_by_tag_id, -> { Tag.joins(:dish_tags).group(:tag_id) }
+  scope :ordered_by_popularity_desc, -> { grouped_by_tag_id.order("COUNT(dish_tags.dish_id) DESC") }
+  scope :ordered_by_popularity_asc, -> { grouped_by_tag_id.order("COUNT(dish_tags.dish_id) ASC") }
+  scope :most_common, -> { ordered_by_popularity_desc.take }
+  scope :least_common, -> { ordered_by_popularity_asc.take }
 
   validate :name, :name_validator
 
