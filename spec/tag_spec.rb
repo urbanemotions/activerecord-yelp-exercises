@@ -2,21 +2,16 @@ require_relative 'spec_helper'
 
 describe 'Tag' do 
 
-  let(:alices_restaurant) {Restaurant.create(:name => "Alice's Restaurant")}
-  
   it "has a name" do 
     tag = Tag.create(:name => "italian")
     expect(tag.name).to eq ("italian")
   end
     
   it "has associated dishes in an array" do 
-    italian = Tag.create(:name => "italian")
+    alices  = Restaurant.create(:name => "Alice's Restaurant")
+    pizza   = Dish.create(:name => "pizza", :restaurant => alices)
+    italian = Tag.create(:name => "italian", :dishes => [pizza])
     
-    pizza = Dish.new(:name => "pizza", :restaurant => alices_restaurant)
-    pizza.tags << italian 
-    pizza.save 
-    
-    pizza.reload
     expect(italian.dishes).to include(pizza)
     expect(pizza.tags).to include(italian)
   end
