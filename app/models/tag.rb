@@ -11,6 +11,7 @@ class Tag < ActiveRecord::Base
   scope :ordered_by_popularity_asc, -> { grouped_by_tag_id.order("COUNT(dish_tags.dish_id) ASC") }
   scope :most_common, -> { ordered_by_popularity_desc.take }
   scope :least_common, -> { ordered_by_popularity_asc.take }
+  scope :uncommon, -> { grouped_by_tag_id.having("COUNT(dish_tags.dish_id) < ?", 5) }
 
   validate :name, :name_validator
 
