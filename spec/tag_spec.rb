@@ -120,4 +120,20 @@ describe 'Tag' do
 
   end
 
+  describe "Tag.popular" do
+
+    it "returns the 5 most used tags" do
+      for i in 1..10 do
+        tag = Tag.create(:name => "tag#{i}")
+        for j in 1..i do
+          Dish.create(:name => "tag#{i}_dish#{j}", :restaurant => alices, :tags => [tag])
+        end
+      end
+
+      binding.pry
+      expect(Tag.popular).to match_array Tag.find(6,7,8,9,10)
+    end
+
+  end
+
 end
