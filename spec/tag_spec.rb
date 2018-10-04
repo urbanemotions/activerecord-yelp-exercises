@@ -130,8 +130,26 @@ describe 'Tag' do
         end
       end
 
-      binding.pry
       expect(Tag.popular).to match_array Tag.find(6,7,8,9,10)
+    end
+
+  end
+
+  describe "Tag#restaurants" do
+
+    it "returns and array of all restaurants with dishes using this tag" do
+      spicy = Tag.create(:name => "spicy")
+      sweet = Tag.create(:name => "sweet")
+ 
+      spicy_town = Restaurant.create(:name => "spice town")
+      spicy_and_sweet = Restaurant.create(:name => "sugar and spice")
+
+      Dish.create(:name => "sugar", :restaurant => spicy_and_sweet, :tags => [sweet])      
+      Dish.create(:name => "pepper", :restaurant => spicy_and_sweet, :tags => [spicy])
+      Dish.create(:name => "salsa", :restaurant => spicy_town, :tags => [spicy])
+
+      expect(spicy.restaurants).to contain_exactly(spicy_town, spicy_and_sweet)
+      expect(sweet.restaurants).to contain_exactly(spicy_and_sweet)
     end
 
   end
