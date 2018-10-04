@@ -2,6 +2,7 @@ require 'pry'
 class Tag < ActiveRecord::Base
   has_many :dish_tags
   has_many :dishes, through: :dish_tags
+  has_many :restaurants, through: :dishes
 
   scope :with_name, -> (name) { where(name: name) }
   scope :used, -> { joins(:dish_tags).distinct }
