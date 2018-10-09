@@ -19,11 +19,7 @@ RSpec.configure do |config|
   config.filter_run :focus
   DatabaseCleaner.strategy = :truncation
 
-  config.before do
-    DatabaseCleaner.clean
-  end
-
-  config.after do
+  config.after(:all) do
     DatabaseCleaner.clean
   end
 
