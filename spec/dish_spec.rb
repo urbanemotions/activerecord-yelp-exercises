@@ -2,6 +2,24 @@ require_relative 'spec_helper'
 
 describe 'Dish' do
 
+  describe 'model' do
+    it 'extends ActiveRecord::Base' do
+      expect(Dish).to be < ActiveRecord::Base
+    end
+
+    it 'has a name' do
+      expect(Dish.column_names).to include("name")
+    end
+
+    it 'has many tags' do
+      expect(Dish.reflect_on_association(:tags).macro).to eq(:has_many)
+    end
+
+    it 'belongs to a restuarant' do
+      expect(Dish.reflect_on_association(:restaurant).macro).to eq(:belongs_to)
+    end
+  end
+
   let(:alices_restaurant) {Restaurant.create(:name => "Alice's Restaurant")}
 
   let(:italian) {Tag.create(:name => "italian")}
@@ -12,15 +30,6 @@ describe 'Dish' do
   let!(:soda)  {Dish.create(:name => "soda", :restaurant => alices_restaurant)}
   let!(:water) {Dish.create(:name => "water", :restaurant => alices_restaurant)}
 
-  it "has a name" do 
-    expect(pizza.name).to eq("pizza")
-  end
-  
-  it "has associated tags in an array" do
-    expect(pizza.tags).to include(italian)
-    expect(italian.dishes).to include(pizza)
-  end
-  
   it "validates that name is present" do 
     expect(Dish.new(:name => nil, :restaurant => alices_restaurant).valid?).to be false
     expect(Dish.new(:name => "Pizza", :restaurant => alices_restaurant).valid?).to be true
