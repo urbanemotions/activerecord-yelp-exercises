@@ -2,7 +2,6 @@ require 'pry'
 class Tag < ActiveRecord::Base
   has_many :dish_tags
   has_many :dishes, through: :dish_tags
-  has_many :restaurants, through: :dishes
 
   scope :with_name, -> (name) { where(name: name) }
   scope :used, -> { joins(:dish_tags).distinct }
@@ -14,8 +13,17 @@ class Tag < ActiveRecord::Base
   scope :least_common, -> { ordered_by_popularity_asc.take }
   scope :uncommon, -> { grouped_by_tag_id.having("COUNT(dish_tags.dish_id) < ?", 5) }
   scope :popular, -> { ordered_by_popularity_desc.take(5) }
+  scope :restaurants_for_tag, -> (tag) { Restaurant.joins(:dishes => :tags).where("dish_tags.tag_id = ?", tag.id) }
 
   validate :name, :name_validator
+
+  def restaurants
+    Tag.restaurants_for_tag(self).distinct
+  end
+
+  def top_restaurant
+    Tag.restaurants_for_tag(self).group(:restaurant_id).order("COUNT(restaurant_id) DESC").take
+  end
 
   private
 
