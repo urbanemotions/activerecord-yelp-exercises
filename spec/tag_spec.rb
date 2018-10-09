@@ -146,6 +146,7 @@ describe 'Tag' do
 
       Dish.create(:name => "sugar", :restaurant => spicy_and_sweet, :tags => [sweet])      
       Dish.create(:name => "pepper", :restaurant => spicy_and_sweet, :tags => [spicy])
+      Dish.create(:name => "pepper2", :restaurant => spicy_and_sweet, :tags => [spicy])
       Dish.create(:name => "salsa", :restaurant => spicy_town, :tags => [spicy])
 
       expect(spicy.restaurants).to contain_exactly(spicy_town, spicy_and_sweet)
