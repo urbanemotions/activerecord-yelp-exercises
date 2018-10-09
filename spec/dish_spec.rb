@@ -32,11 +32,6 @@ describe 'Dish' do
       expect(Dish.new(:name => "Pizza", :restaurant => nil).valid?).to be false
       expect(Dish.new(:name => "Pizza", :restaurant => alices).valid?).to be true
     end
-
-    it 'invokes validations for associated DishTags' do
-      # Somehow we need to verify here that the valitations on DishTag are actually
-      # checked whenever we add a tag to a dish.
-    end
   end
 
   describe 'queries' do
