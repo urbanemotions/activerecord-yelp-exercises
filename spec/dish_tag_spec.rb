@@ -2,17 +2,31 @@ require_relative 'spec_helper'
 
 describe 'DishTag' do
 
-  let(:alices_restaurant) {Restaurant.create(:name => "Alice's Restaurant")}
+  describe 'model' do
+    it 'extends ActiveRecord::Base' do
+      expect(DishTag).to be < ActiveRecord::Base
+    end
 
-  it "validates that dishes can only have one of any particular tag" do 
-    pizza = Dish.create(:name => "pizza", :restaurant => alices_restaurant)
-    italian = Tag.create(:name => "italian")
+    it 'belongs to a dish' do
+      expect(DishTag.reflect_on_association(:dish).macro).to eq(:belongs_to)
+    end
 
-    dish_tag_1 = DishTag.create(dish: pizza, tag: italian)
-    expect(dish_tag_1.valid?).to be true
+    it 'belongs to a tag' do
+      expect(DishTag.reflect_on_association(:tag).macro).to eq(:belongs_to)
+    end
+  end
 
-    dish_tag_2 = DishTag.create(dish: pizza, tag: italian)
-    expect(dish_tag_2.valid?).to be false
+  describe 'validations' do
+    let!(:alices) {Restaurant.create(:name => "Alice's Restaurant")}
+    let!(:veggie) {Tag.create(:name => "vegetarian")}
+    let!(:salad)  {Dish.create(:name => "salad", :restaurant => alices)}
+
+    it 'validates that dishes can only have on of any particular tag' do
+      expect(DishTag.new(dish: salad, tag: veggie).valid?).to be true
+
+      DishTag.create(dish: salad, tag: veggie)
+      expect(DishTag.new(dish: salad, tag: veggie).valid?).to be false
+    end
   end
 
 end
