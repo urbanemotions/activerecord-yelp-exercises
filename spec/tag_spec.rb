@@ -154,4 +154,20 @@ describe 'Tag' do
 
   end
 
+  describe "Tag#top_restaurant" do
+
+    it "returns the restaurant with the most dishes associated with this tag" do
+      tag = Tag.create(:name => "tag")
+      for i in 1..5 do
+        restaurant = Restaurant.create(:name => "restaurant#{i}")
+        for j in 1..i do
+          Dish.create(:name => "r#{i}d#{j}", :restaurant => restaurant, :tags => [tag])
+        end
+      end
+
+      expect(tag.top_restaurant).to eq(restaurant)
+    end
+
+  end
+
 end
