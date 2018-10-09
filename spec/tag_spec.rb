@@ -171,4 +171,20 @@ describe 'Tag' do
 
   end
 
+  describe "Tag#dish_count" do
+
+    it "returns the number of dishes associated with this tag" do
+      tag = Tag.create(:name => "tag")
+      Dish.create(:name => "dish1", :tags => [tag], :restaurant => alices)
+      expect(tag.dish_count).to eq(1)
+      Dish.create(:name => "dish2", :tags => [tag], :restaurant => alices)
+      expect(tag.dish_count).to eq(2)
+    end
+
+    it "returns 0 when no dishes are associated with this tag" do
+      expect(Tag.create(:name => "tag").dish_count).to eq(0)
+    end
+
+  end
+
 end
