@@ -2,189 +2,155 @@ require_relative 'spec_helper'
 
 describe 'Tag' do 
 
-  let(:alices) {Restaurant.create(:name => "Alice's Restaurant")}
-
-  it "has a name" do 
-    tag = Tag.create(:name => "italian")
-    expect(tag.name).to eq ("italian")
-  end
-    
-  it "has associated dishes in an array" do 
-    pizza   = Dish.create(:name => "pizza", :restaurant => alices)
-    italian = Tag.create(:name => "italian", :dishes => [pizza])
-    
-    expect(italian.dishes).to include(pizza)
-    expect(pizza.tags).to include(italian)
-  end
-  
-  it "validates that name is present" do 
-    expect(Tag.new(:name => nil).valid?).to be false
-    expect(Tag.new(:name => "italian").valid?).to be true 
-  end
-  
-  it "validates that name is 3 or more characters long" do 
-    expect(Tag.new(:name => "").valid?).to be false
-    expect(Tag.new(:name => "a").valid?).to be false
-    expect(Tag.new(:name => "ab").valid?).to be false
-    expect(Tag.new(:name => "abc").valid?).to be true
-    expect(Tag.new(:name => "abcd").valid?).to be true
-  end
-  
-  it "validates that name is no more than 2 words long" do 
-    expect(Tag.new(:name => "one two three").valid?).to be false 
-    expect(Tag.new(:name => "one two").valid?).to be true 
-    expect(Tag.new(:name => "one").valid?).to be true
-  end
-
-  describe "Tag.most_common" do
-
-    it "returns the tag with the most associated dishes" do
-      three = Tag.create(:name => "three")
-      two   = Tag.create(:name => "two")
-      one   = Tag.create(:name => "one")
-
-      for i in 1..3 do
-        Dish.create(:name => "dish#{i}", :tags => [three], :restaurant => alices)
-      end
-
-      for i in 1..2 do
-        Dish.create(:name => "dish#{i+3}", :tags => [two], :restaurant => alices)
-      end
-
-      Dish.create(:name => "dish6", :tags => [one], :restaurant => alices)
-      expect(Tag.most_common).to eq(three)
+  describe 'model' do
+    it 'extends ActiveRecord::base' do
+      expect(Tag).to be < ActiveRecord::Base
     end
-
-  end
-
-  describe "Tag.least_common" do
-
-    it "returns the tag with the most associated dishes" do
-      three = Tag.create(:name => "three")
-      two   = Tag.create(:name => "two")
-      one   = Tag.create(:name => "one")
-
-      for i in 1..3 do
-        Dish.create(:name => "dish#{i}", :tags => [three], :restaurant => alices)
-      end
-
-      for i in 1..2 do
-        Dish.create(:name => "dish#{i+3}", :tags => [two], :restaurant => alices)
-      end
-
-      Dish.create(:name => "dish6", :tags => [one], :restaurant => alices)
-      expect(Tag.least_common).to eq(one)
-    end
-
-
-  end
-
-  describe "Tag.unused" do
-
-    it "returns an array of all tags without associated dishes" do
-      unused1 = Tag.create(:name => "lonely")
-      unused2 = Tag.create(:name => "unloved")
-      used    = Tag.create(:name => "best")
-
-      Dish.create(:name => "some dish", :restaurant => alices, :tags => [used])
-
-      expect(Tag.unused).to contain_exactly(unused1, unused2)
-    end
-
-  end
-
-  describe "Tag.uncommon" do
-
-    it "returns an array of all tags associated with fewer than 5 dishes" do
-      fewerer_than_5 = Tag.create(:name => "fewererthan 5")
-      fewer_than_5   = Tag.create(:name => "fewerthan 5")
-      exactly_5      = Tag.create(:name => "eactly 5")
-      more_than_5    = Tag.create(:name => "morethan 5")
-
-      Dish.create(:name => "1", :restaurant => alices, :tags => [fewerer_than_5])
-
-      for i in 2..5
-        Dish.create(:name => "#{i}", :restaurant => alices, :tags => [fewer_than_5])
-      end
-
-      for i in 6..10
-        Dish.create(:name => "#{i}", :restaurant => alices, :tags => [exactly_5])
-      end
-
-      for i in 11..30
-        Dish.create(:name => "#{i}", :restaurant => alices, :tags => [more_than_5])
-      end
-
-      expect(Tag.uncommon).to contain_exactly(fewerer_than_5, fewer_than_5)
-    end
-
-  end
-
-  describe "Tag.popular" do
-
-    it "returns the 5 most used tags" do
-      for i in 1..10 do
-        tag = Tag.create(:name => "tag#{i}")
-        for j in 1..i do
-          Dish.create(:name => "tag#{i}_dish#{j}", :restaurant => alices, :tags => [tag])
-        end
-      end
-
-      expect(Tag.popular).to match_array Tag.find(6,7,8,9,10)
-    end
-
-  end
-
-  describe "Tag#restaurants" do
-
-    it "returns and array of all restaurants with dishes using this tag" do
-      spicy = Tag.create(:name => "spicy")
-      sweet = Tag.create(:name => "sweet")
  
-      spicy_town = Restaurant.create(:name => "spice town")
-      spicy_and_sweet = Restaurant.create(:name => "sugar and spice")
-
-      Dish.create(:name => "sugar", :restaurant => spicy_and_sweet, :tags => [sweet])      
-      Dish.create(:name => "pepper", :restaurant => spicy_and_sweet, :tags => [spicy])
-      Dish.create(:name => "pepper2", :restaurant => spicy_and_sweet, :tags => [spicy])
-      Dish.create(:name => "salsa", :restaurant => spicy_town, :tags => [spicy])
-
-      expect(spicy.restaurants).to contain_exactly(spicy_town, spicy_and_sweet)
-      expect(sweet.restaurants).to contain_exactly(spicy_and_sweet)
+    it 'has a name' do
+      expect(Tag.column_names).to include("name")
     end
 
+    it 'has many dishes' do
+      expect(Tag.reflect_on_association(:dishes).macro).to eq(:has_many)
+    end
   end
 
-  describe "Tag#top_restaurant" do
+  describe 'validations' do
+    it 'validates that name is present' do
+      expect(Tag.new(name: nil).valid?).to be false
+      expect(Tag.new(name: "vegetarian").valid?).to be true
+    end
 
-    it "returns the restaurant with the most dishes associated with this tag" do
-      tag = Tag.create(:name => "tag")
-      for i in 1..5 do
-        restaurant = Restaurant.create(:name => "restaurant#{i}")
-        for j in 1..i do
-          Dish.create(:name => "r#{i}d#{j}", :restaurant => restaurant, :tags => [tag])
+    it 'validates that name is 3 or more characters long' do
+      expect(Tag.new(:name => "").valid?).to be false
+      expect(Tag.new(:name => "a").valid?).to be false
+      expect(Tag.new(:name => "ab").valid?).to be false
+      expect(Tag.new(:name => "abc").valid?).to be true
+      expect(Tag.new(:name => "abcd").valid?).to be true
+    end
+
+    it 'validates that name is one or two words, not more' do
+      expect(Tag.new(:name => "one two three").valid?).to be false 
+      expect(Tag.new(:name => "one two").valid?).to be true 
+      expect(Tag.new(:name => "one").valid?).to be true
+    end
+  end
+
+  describe 'queries' do
+    before(:all) do
+      @restaurants_hash = {
+        :McDonalds => {
+          burger: ["meat", "meal"],
+          fries: ["side", "meat"],
+          shake: ["drink", "side", "meat"]
+        },
+        :Chipotle => {
+          taco: ["meal", "spicy", "vegetarian"],
+          burrito: ["spicy", "meal"],
+          bowel: ["spicy", "meal"]
+        },
+        :JimmyJohns => {
+          sandwich: ["meal", "meat"],
+          sandwich2: ["meat", "meal"],
+          sandwich3: ["meat", "meal"],
+          sandwich4: ["meat", "meal"],
+          chips: ["side", "vegetarian"],
+          soda: ["vegetarian", "drink"]
+        }
+      }
+
+      @tag_freq = Hash.new(0)
+      @tag_restaurants = Hash.new
+      @restaurants_hash.each do |name, dish_hash|
+        r = Restaurant.create(name: name)
+        dish_hash.each do |dish, tags|
+          d = Dish.create(name: dish, restaurant: r)
+          tags.each do |tag|
+            t = Tag.find_or_create_by(name: tag)
+            d.tags << t
+            @tag_freq[tag] += 1
+
+            if @tag_restaurants[tag] == nil
+              @tag_restaurants[tag] = []
+            end
+            @tag_restaurants[tag] << name
+          end
         end
       end
 
-      expect(tag.top_restaurant).to eq(restaurant)
+      @unused1 = Tag.create(name: "unused1")
+      @unused2 = Tag.create(name: "unused2")
     end
 
-  end
-
-  describe "Tag#dish_count" do
-
-    it "returns the number of dishes associated with this tag" do
-      tag = Tag.create(:name => "tag")
-      Dish.create(:name => "dish1", :tags => [tag], :restaurant => alices)
-      expect(tag.dish_count).to eq(1)
-      Dish.create(:name => "dish2", :tags => [tag], :restaurant => alices)
-      expect(tag.dish_count).to eq(2)
+    describe "Tag.most_common" do
+      it "returns the tag with the most associated dishes" do
+        expected = Tag.find_by(name: @tag_freq.max_by {|tag, freq| freq}[0])
+        expect(Tag.most_common).to eq(expected)
+      end
     end
 
-    it "returns 0 when no dishes are associated with this tag" do
-      expect(Tag.create(:name => "tag").dish_count).to eq(0)
+    describe "Tag.least_common" do
+      it "returns the tag with the fewest associated dishes" do
+        expected = Tag.find_by(name: @tag_freq.min_by {|tag, freq| freq}[0])
+        expect(Tag.least_common).to eq(expected)
+      end
     end
 
+    describe "Tag.unused" do
+      it "returns an array of all tags without associated dishes" do
+        expect(Tag.unused).to contain_exactly(@unused1, @unused2)
+      end
+    end
+
+    describe "Tag.uncommon" do
+      it "returns an array of all tags associated with fewer than 5 dishes" do
+        expected = @tag_freq.select {|tag, freq| freq < 5}
+                            .map    {|tag, freq| Tag.find_by(name: tag)}
+        expect(Tag.uncommon).to match_array(expected)
+      end
+    end
+
+    describe "Tag.popular" do
+      it "returns the 5 most used tags" do
+        expected = @tag_freq.sort_by {|tag, freq| -freq}
+                            .map     {|keyvalue| Tag.find_by(name: keyvalue[0])}
+                            .slice(0, 5)
+        expect(Tag.popular).to match_array(expected)
+      end
+    end
+
+    describe "Tag#restaurants" do
+      it "returns and array of all restaurants with dishes using this tag" do
+        @tag_restaurants.each do |tag, restaurants|
+          expected = restaurants.uniq.map {|name| Restaurant.find_by(name: name)}
+          expect(Tag.find_by(name: tag).restaurants).to match_array(expected)
+        end
+      end
+    end
+
+    describe "Tag#top_restaurant" do
+      it "returns the restaurant with the most dishes associated with this tag" do
+        @tag_restaurants.each do |tag, restaurants|
+          restaurant_freq = Hash.new(0)
+          restaurants.each {|name| restaurant_freq[name] += 1}
+          expected = Restaurant.find_by(name: restaurant_freq.max_by {|name, freq| freq}[0])
+          expect(Tag.find_by(name: tag).top_restaurant).to eq(expected)
+        end
+      end
+    end
+
+    describe "Tag#dish_count" do
+      it "returns the number of dishes associated with this tag" do
+        @tag_freq.each do |tag, expected|
+          expect(Tag.find_by(name: tag).dish_count).to eq(expected)
+        end
+      end
+
+      it "returns 0 when no dishes are associated with this tag" do
+        expect(@unused1.dish_count).to eq(0)
+      end
+    end
   end
 
 end
