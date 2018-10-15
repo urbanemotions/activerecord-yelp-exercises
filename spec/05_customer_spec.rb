@@ -21,4 +21,11 @@ describe 'Customer' do
       expect(Customer.reflect_on_association(:reviews).macro).to eq(:has_many)
     end
   end
+
+  describe 'validations' do
+    it 'validates that name is present' do
+      expect(Customer.new(name: nil, lat: 0, lon: 0).valid?).to be false
+      expect(Customer.new(name: "Mr. Name", lat: 0, lon: 0).valid?).to be true 
+    end
+  end
 end
