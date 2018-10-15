@@ -14,5 +14,11 @@ describe 'Customer' do
     it 'has a lon(gitude)' do
       expect(Customer.column_names).to include("lon")
     end
+    it 'has many orders' do
+      expect(Customer.reflect_on_association(:orders).macro).to eq(:has_many)
+    end
+    it 'has many reviews' do
+      expect(Customer.reflect_on_association(:reviews).macro).to eq(:has_many)
+    end
   end
 end
