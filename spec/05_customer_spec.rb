@@ -27,5 +27,29 @@ describe 'Customer' do
       expect(Customer.new(name: nil, lat: 0, lon: 0).valid?).to be false
       expect(Customer.new(name: "Mr. Name", lat: 0, lon: 0).valid?).to be true 
     end
+    it 'validates that lat is present' do
+      expect(Customer.new(name: "Mr. Name", lat: nil, lon: 0).valid?).to be false
+      expect(Customer.new(name: "Mr. Name", lat: 0, lon: 0).valid?).to be true 
+    end
+    it 'validates that lat >= -90' do
+      expect(Customer.new(name: "Mr. Name", lat: -91, lon: 0).valid?).to be false
+      expect(Customer.new(name: "Mr. Name", lat: -90, lon: 0).valid?).to be true 
+    end
+    it 'validates that lat <= 90' do
+      expect(Customer.new(name: "Mr. Name", lat: 91, lon: 0).valid?).to be false
+      expect(Customer.new(name: "Mr. Name", lat: 90, lon: 0).valid?).to be true 
+    end
+    it 'validates that lon is present' do
+      expect(Customer.new(name: "Mr. Name", lat: 0, lon: nil).valid?).to be false
+      expect(Customer.new(name: "Mr. Name", lat: 0, lon: 0).valid?).to be true 
+    end
+    it 'validates that lon >= -180' do
+      expect(Customer.new(name: "Mr. Name", lat: 0, lon: -181).valid?).to be false
+      expect(Customer.new(name: "Mr. Name", lat: 0, lon: -180).valid?).to be true 
+    end
+    it 'validates that lon <= 180' do
+      expect(Customer.new(name: "Mr. Name", lat: 0, lon: 181).valid?).to be false
+      expect(Customer.new(name: "Mr. Name", lat: 0, lon: 180).valid?).to be true 
+    end
   end
 end
