@@ -1,7 +1,9 @@
 class Dish < ActiveRecord::Base
   belongs_to :restaurant
   has_many :dish_tags
+  has_many :dish_orders
   has_many :tags, through: :dish_tags
+  has_many :orders, through: :dish_orders
 
   scope :with_tag, -> (name) { joins(:tags).merge(Tag.with_name(name)) }
   scope :without_tag, -> (name) { where.not(id: with_tag(name)) }
