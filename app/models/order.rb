@@ -6,4 +6,5 @@ class Order < ActiveRecord::Base
 
   validates :customer, :restaurant, presence: true
   validates :dishes, length: {minimum: 1}
+  validates_associated :dish_orders
 end
