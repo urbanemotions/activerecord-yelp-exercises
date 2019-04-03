@@ -93,7 +93,7 @@ ActiveRecord methods you might find useful:
 - `group`
 - `having`
 
-[Examples and explantations here](https://guides.rubyonrails.org/active_record_querying.html#conditions)
+[Examples and explanations here](https://guides.rubyonrails.org/active_record_querying.html#conditions)
 
 *Note: In order to test these methods, you'll probably need to have particular seed data. Create it.*
 
