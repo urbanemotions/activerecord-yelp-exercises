@@ -4,7 +4,7 @@ require_relative '../config/environment'
 require 'rake'
 load './Rakefile'
 
-if ActiveRecord::Migrator.needs_migration?
+if ActiveRecord::Base.connection.migration_context.needs_migration?
   raise 'Migrations are pending. Run `rake db:migrate RAILS_ENV=test` to resolve the issue.'
 end
 
