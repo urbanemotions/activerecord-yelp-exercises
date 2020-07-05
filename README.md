@@ -202,3 +202,4 @@ Read [this](https://robots.thoughtbot.com/validation-database-constraint-or-both
 ## Bonus 2. N+1 Queries
 
 Read [the section of the rails guide](https://guides.rubyonrails.org/active_record_querying.html#eager-loading-associations) about N+1 queries and Eager Loading Associations. Using the [ActiveRecord Logger](https://guides.rubyonrails.org/v2.3.11/debugging_rails_applications.html#the-logger), find out which of the methods you've written so far have an N+1 query. Fix them.
+
